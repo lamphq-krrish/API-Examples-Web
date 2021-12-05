@@ -12,6 +12,8 @@
  */
 var client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
+var serverList = ["private-ap-23.edge.agora.io","private-ap-29.edge.agora.io"];
+client.setLocalAccessPoints(serverList, "edge.agora.io");
 /*
  * Clear the video and audio tracks used by `client` on initiation.
  */

@@ -12,8 +12,6 @@
  */
 var client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
 
-var serverList = ["private-ap-23.edge.agora.io","private-ap-29.edge.agora.io"];
-client.setLocalAccessPoints(serverList, "edge.agora.io");
 /*
  * Clear the video and audio tracks used by `client` on initiation.
  */
@@ -34,7 +32,9 @@ var options = {
   appid: null,
   channel: null,
   uid: null,
-  token: null
+  token: null,
+  ip: null,
+  domain: null
 };
 
 /*
@@ -69,6 +69,12 @@ $("#join-form").submit(async function (e) {
     options.token = $("#token").val();
     options.channel = $("#channel").val();
     options.uid = Number($("#uid").val());
+    options.ip = $("#ip").val();
+    options.domain = $("#domain").val();
+    if (options.ip && options.domain) {
+      var serverList = options.ip.split(",");
+      client.setLocalAccessPoints(serverList, options.domain);
+    }
     await join();
     if(options.token) {
       $("#success-alert-with-token").css("display", "block");

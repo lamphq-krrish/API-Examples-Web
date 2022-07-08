@@ -21,12 +21,13 @@ function AgoraCall() {
   const [micActive, setMicActive] = useState(true); 
   const [screenSharing, setScreenSharing] = useState(false);
   
-  const publish = true;//pinnedUID == uid;
+  const publish = pinnedUID == uid;
 
   console.log('Publish value', publish);
 
   const {
-    localAudioTrack, localVideoTrack, leave, join, joinState, remoteUsers, publishScreenTrack, unPublishLocalVideoTrack, rePublishLocalVideoTrack
+    localAudioTrack, localVideoTrack, leave, join, joinState, remoteUsers, publishScreenTrack, unPublishLocalVideoTrack, rePublishLocalVideoTrack, muteLocalAudio, unmuteLocalAudio,
+    pauseLocalVideo, resumeLocalVideo, unPublishScreenTrack
   } = useAgora(client, publish);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ function AgoraCall() {
 
 
   const getPinnedTracks = () => {
+    console.log('Get pinned track called');
     if(pinnedUID) {
       const pinnedUser = remoteUsers.filter(u => u.uid == pinnedUID)[0];
       if(pinnedUser) {
@@ -46,26 +48,47 @@ function AgoraCall() {
     return {audio: undefined, video: localVideoTrack};
   }
 
-  const toggleVideo = () => {
-    if (!publish) return;
-    localVideoTrack?.setEnabled(!localVideoTrack.enabled);
+  const dropCall = () => {
+    leave();
   }
 
-  const toggleAudio = () => {
-    if (!publish) return;
-    localAudioTrack?.setEnabled(!localAudioTrack.enabled);
+  const muteAudio = () => {
+    muteLocalAudio();
+    setMicActive(false);
+  }
+
+  const unmuteAudio = () =>  {
+    unmuteLocalAudio();
+    setMicActive(true);
+  }
+
+  const pauseVideo = () => {
+    pauseLocalVideo();
+    setCameraActive(false);
+  }
+
+  const resumeVideo = () => {
+    resumeLocalVideo();
+    setCameraActive(true);
   }
 
   const startScreenShare = () => {
     unPublishLocalVideoTrack();
     publishScreenTrack();
+    setScreenSharing(true);
   }
+
+  const stopScreenShare = () => {
+    unPublishScreenTrack();
+    rePublishLocalVideoTrack();
+    setScreenSharing(false);
+  } 
 
   const getPublisherControls = () => {
       return <>
-         {micActive && <MdMicOff className='control-button bg-red' /> || <MdMic className='control-button bg-grey' />}
-         {cameraActive &&  <MdVideocamOff className='control-button bg-red' /> ||  <MdVideocam className='control-button bg-grey' />}
-         {screenSharing && <MdScreenShare className='control-button bg-red' /> || <MdStopScreenShare className='control-button bg-grey' />}
+         {micActive && <MdMicOff className='control-button bg-grey' onClick={muteAudio} /> || <MdMic className='control-button bg-red' onClick={unmuteAudio}/>}
+         {cameraActive &&  <MdVideocamOff className='control-button bg-grey' onClick={pauseVideo}/> ||  <MdVideocam className='control-button bg-red' onClick={resumeVideo} />}
+         {screenSharing && <MdStopScreenShare className='control-button bg-red' onClick={stopScreenShare} /> || <MdScreenShare onClick={startScreenShare} className='control-button bg-grey' />}
       </>
     }
 
@@ -73,7 +96,7 @@ function AgoraCall() {
     return (
       <div className='control-buttons-wrapper'>
         {publish && getPublisherControls()}
-        <MdCallEnd className='control-button bg-red' />
+        <MdCallEnd className='control-button bg-red' onClick={dropCall}/>
       </div>
     );
   }

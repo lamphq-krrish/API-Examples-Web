@@ -15,11 +15,15 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
       remoteUsers: IAgoraRTCRemoteUser[],
       publishScreenTrack: Function,
       stopScreenSharing: Function,
-      publishLocalTracks: Function,
       resumeLocalTracks: Function,
       pauseLocalTracks: Function,
       rePublishLocalVideoTrack: Function,
       unPublishLocalVideoTrack: Function,
+      muteLocalAudio: Function,
+      unmuteLocalAudio: Function,
+      pauseLocalVideo: Function,
+      resumeLocalVideo: Function,
+      unPublishScreenTrack: Function,
     }
     {
   const [localVideoTrack, setLocalVideoTrack] = useState<ILocalVideoTrack | undefined>(undefined);
@@ -50,11 +54,6 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
     setJoinState(true);
   }
 
-  async function publishLocalTracks() {
-    if(!client || !publish) return;
-    
-  }
-
   async function leave() {
     if (localAudioTrack) {
       localAudioTrack.stop();
@@ -69,19 +68,19 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
     await client?.leave();
   }
 
-  function muteAudio() {
+  function muteLocalAudio() {
     localAudioTrack?.setEnabled(false);
   }
 
-  function unmuteAudio() {
+  function unmuteLocalAudio() {
     localAudioTrack?.setEnabled(true);
   }
 
-  function stopVideo() {
+  function pauseLocalVideo() {
     localVideoTrack?.setEnabled(false);
   }
 
-  function resumeVideo() {
+  function resumeLocalVideo() {
     localVideoTrack?.setEnabled(true);
   }
 
@@ -121,6 +120,11 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
       window.alert("Unable to share screen, check your settiings");
     }
     
+  }
+
+  async function unPublishScreenTrack() {
+    client?.unpublish(screenTrack);
+    return;
   }
 
   async function stopScreenSharing(){
@@ -168,10 +172,14 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
     remoteUsers,
     publishScreenTrack,
     stopScreenSharing,
-    publishLocalTracks,
     resumeLocalTracks,
     pauseLocalTracks,
     unPublishLocalVideoTrack,
-    rePublishLocalVideoTrack
+    rePublishLocalVideoTrack,
+    muteLocalAudio,
+    unmuteLocalAudio,
+    pauseLocalVideo,
+    resumeLocalVideo,
+    unPublishScreenTrack,
   };
 }

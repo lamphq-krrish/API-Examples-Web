@@ -1,0 +1,62 @@
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-buttons-wrapper {
+  position: absolute;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  background-color: black;
+  width: 100%;
+}
+
+.main-container {
+  position: relative;
+}
+
+.call {
+  text-align: center;
+}
+
+.control-button {
+  margin-top: 4px;
+  padding: 12px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  color: floralwhite;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.bg-red {
+  background-color: red;
+}
+
+.bg-grey {
+  background-color: #202124;
+}
+
+.player-container {
+  padding: 20px;
+  text-align: initial;
+}
+
+.button-group {
+  padding: 20px;
+}
+
+
+.call-form {
+  padding: 20px;
+}
+
+input, button {
+  margin-right: 10px;
+}

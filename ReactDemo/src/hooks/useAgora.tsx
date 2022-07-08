@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import AgoraRTC, {
   IAgoraRTCClient, IAgoraRTCRemoteUser, MicrophoneAudioTrackInitConfig, CameraVideoTrackInitConfig, IMicrophoneAudioTrack, ICameraVideoTrack, ILocalVideoTrack, ILocalAudioTrack } from 'agora-rtc-sdk-ng';
 
-export default function useAgora(client: IAgoraRTCClient | undefined)
+
+
+export default function useAgora(client: IAgoraRTCClient | undefined, publish: boolean = true)
   :
    {
       localAudioTrack: ILocalAudioTrack | undefined,
@@ -11,10 +13,18 @@ export default function useAgora(client: IAgoraRTCClient | undefined)
       leave: Function,
       join: Function,
       remoteUsers: IAgoraRTCRemoteUser[],
+      publishScreenTrack: Function,
+      stopScreenSharing: Function,
+      publishLocalTracks: Function,
+      resumeLocalTracks: Function,
+      pauseLocalTracks: Function,
+      rePublishLocalVideoTrack: Function,
+      unPublishLocalVideoTrack: Function,
     }
     {
   const [localVideoTrack, setLocalVideoTrack] = useState<ILocalVideoTrack | undefined>(undefined);
   const [localAudioTrack, setLocalAudioTrack] = useState<ILocalAudioTrack | undefined>(undefined);
+  const [screenTrack, setScreenTrack] = useState<any>(undefined);
 
   const [joinState, setJoinState] = useState(false);
 
@@ -31,14 +41,18 @@ export default function useAgora(client: IAgoraRTCClient | undefined)
   async function join(appid: string, channel: string, token?: string, uid?: string | number | null) {
     if (!client) return;
     const [microphoneTrack, cameraTrack] = await createLocalTracks();
-    
-    await client.join(appid, channel, token || null);
+    await client.join(appid, channel, token || null, uid);
     await client.publish([microphoneTrack, cameraTrack]);
 
     (window as any).client = client;
     (window as any).videoTrack = cameraTrack;
 
     setJoinState(true);
+  }
+
+  async function publishLocalTracks() {
+    if(!client || !publish) return;
+    
   }
 
   async function leave() {
@@ -53,6 +67,65 @@ export default function useAgora(client: IAgoraRTCClient | undefined)
     setRemoteUsers([]);
     setJoinState(false);
     await client?.leave();
+  }
+
+  function muteAudio() {
+    localAudioTrack?.setEnabled(false);
+  }
+
+  function unmuteAudio() {
+    localAudioTrack?.setEnabled(true);
+  }
+
+  function stopVideo() {
+    localVideoTrack?.setEnabled(false);
+  }
+
+  function resumeVideo() {
+    localVideoTrack?.setEnabled(true);
+  }
+
+  function pauseLocalTracks() {
+    localVideoTrack?.setEnabled(false);
+    localAudioTrack?.setEnabled(false);
+  }
+
+  function resumeLocalTracks() {
+    localVideoTrack?.setEnabled(true);
+    localAudioTrack?.setEnabled(true);
+  }
+
+  function unPublishLocalVideoTrack() {
+    client?.unpublish(localVideoTrack);
+    return;
+  }
+
+  function rePublishLocalVideoTrack() {
+    
+    client?.publish(localVideoTrack as ILocalVideoTrack);
+    return;
+  }
+
+  async function publishScreenTrack() {
+    if (!client || !publish) return;
+    try {
+      if (screenTrack) {
+        client.publish(screenTrack);
+      } else {
+        const screenShareTrack = await AgoraRTC.createScreenVideoTrack({encoderConfig: "1080p_1", optimizationMode: "detail"}, "disable" );
+        setScreenTrack(screenShareTrack);
+        client.publish(screenShareTrack);
+      }      
+    }catch(err) {
+      console.error(err);
+      window.alert("Unable to share screen, check your settiings");
+    }
+    
+  }
+
+  async function stopScreenSharing(){
+    screenTrack.stop();
+    screenTrack.close();
   }
 
   useEffect(() => {
@@ -93,5 +166,12 @@ export default function useAgora(client: IAgoraRTCClient | undefined)
     leave,
     join,
     remoteUsers,
+    publishScreenTrack,
+    stopScreenSharing,
+    publishLocalTracks,
+    resumeLocalTracks,
+    pauseLocalTracks,
+    unPublishLocalVideoTrack,
+    rePublishLocalVideoTrack
   };
 }

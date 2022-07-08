@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from "react";
 export interface VideoPlayerProps {
   videoTrack: ILocalVideoTrack | IRemoteVideoTrack | undefined;
   audioTrack: ILocalAudioTrack | IRemoteAudioTrack | undefined;
+  style: {}
 }
 
 const MediaPlayer = (props: VideoPlayerProps) => {
@@ -24,7 +25,7 @@ const MediaPlayer = (props: VideoPlayerProps) => {
     };
   }, [props.audioTrack]);
   return (
-    <div ref={container}  className="video-player" style={{ width: "320px", height: "240px"}}></div>
+    <div ref={container}  className="video-player" style={props.style}></div>
   );
 }
 

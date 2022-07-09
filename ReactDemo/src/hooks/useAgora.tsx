@@ -47,8 +47,6 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
     await client.join(appid, channel, token || null, uid);
 
     if (publish){
-      console.log('$$$$$$$$$$$');
-      console.log('Publishing');
       const [microphoneTrack, cameraTrack] = await createLocalTracks();
       await client.publish([microphoneTrack, cameraTrack]);
       (window as any).videoTrack = cameraTrack;
@@ -113,7 +111,7 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
 
   async function publishScreenTrack() {
     if (!client || !publish) return;
-    try {
+
       if (screenTrack) {
         client.publish(screenTrack);
       } else {
@@ -121,11 +119,6 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
         setScreenTrack(screenShareTrack);
         client.publish(screenShareTrack);
       }      
-    }catch(err) {
-      console.error(err);
-      window.alert("Unable to share screen, check your settiings");
-    }
-    
   }
 
   async function unPublishScreenTrack() {
@@ -147,8 +140,6 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
       setRemoteUsers(remoteUsers => Array.from(client.remoteUsers));
     }
     const handleUserJoined = (user: IAgoraRTCRemoteUser) => {
-      console.log('$$$$$$$$$$$$$');
-      console.log('User joined');
       setRemoteUsers(remoteUsers => Array.from(client.remoteUsers));
     }
     const handleUserLeft = (user: IAgoraRTCRemoteUser) => {

@@ -40,9 +40,6 @@ function AgoraCall() {
       return {audio: undefined, video: localVideoTrack};
     }
     const remoteTracks = remoteUsers[0];
-    console.log('*****************');
-    console.log(remoteTracks);
-
     if(!remoteTracks) {
       return null;
     }
@@ -74,10 +71,17 @@ function AgoraCall() {
     setCameraActive(true);
   }
 
-  const startScreenShare = () => {
+  const startScreenShare = async () => {
     unPublishLocalVideoTrack();
-    publishScreenTrack();
-    setScreenSharing(true);
+    try{
+      await publishScreenTrack();
+      setScreenSharing(true);
+    }catch(err) {
+      rePublishLocalVideoTrack();
+      console.error(err);
+      window.alert('Unable to share screen, check your settings');
+    }
+   
   }
 
   const stopScreenShare = () => {

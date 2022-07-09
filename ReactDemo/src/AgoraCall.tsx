@@ -9,7 +9,7 @@ import {BiClipboard} from "react-icons/bi";
 import {FaUserCircle} from "react-icons/fa";
 
 
-const client = AgoraRTC.createClient({ codec: 'h264', mode: 'rtc' });
+const client = AgoraRTC.createClient({ codec: 'vp8', mode: 'rtc' });
 
 const ROLE = {
   instructor: 'instructor',
@@ -154,11 +154,11 @@ function AgoraCall() {
     if(!joining) {
       return (
         <div className='join-screen-container'>
-          <button id='join' type='button' className='btn btn-primary btn-sm' disabled={joinState} onClick={joinCall}>Join</button>
+          <button id='join' type='button' className='btn btn-primary btn-sm' disabled={joinState} onClick={joinCall}>Join activity</button>
         </div>
       );
     }
-    return   <div className='join-screen-container'>Joining...</div>
+    return   <div className='join-screen-container'><span>Joining...</span></div>
   }
 
   return (

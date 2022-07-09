@@ -17,7 +17,7 @@
   width: 100%;
 }
 
-.user-placeholder-controller {
+.user-placeholder-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,6 +25,20 @@
   height: 100vh;
   background-color: black;
 }
+
+.host-placeholder-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: black;
+}
+
+.host-placeholder-wrapper span{
+  color: floralwhite;
+}
+
 
 .user-placeholder {
   font-size: 64px;

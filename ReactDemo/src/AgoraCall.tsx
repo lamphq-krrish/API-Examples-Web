@@ -17,37 +17,40 @@ function AgoraCall() {
   const appId = getAppId();
   const token = getRtcToken();
   const channel = getRtcChannel();
-  //const token = getRtcToken();
-  // const role = getRole();
-  // const [ appid, setAppid ] = useState('63250937b95542478cb8d683cb5c3573');
-  //const [ token, setToken ] = useState('00663250937b95542478cb8d683cb5c3573IABlEBdj8mWzRE3aZoUsAwSg1K5DQCNHDehW0emnxru4NgZa8+gAAAAAEADLkLYodYfIYgEAAQB1h8hi');
-  //const [ channel, setChannel ] = useState('testing');
+  const role = getRole();
+
   const [publisherUid, setPublisherUid] = useState(null);
   const [cameraActive, setCameraActive] = useState(true);
   const [micActive, setMicActive] = useState(true); 
   const [screenSharing, setScreenSharing] = useState(false);
   const [joining, setJoining] = useState(false);
-  const publish = publisherUid == uid;
+
+  const publish = role === "instructor";
+  
   const {
-   localVideoTrack, leave, join, joinState, remoteUsers, publishScreenTrack, unPublishLocalVideoTrack, rePublishLocalVideoTrack, muteLocalAudio, unmuteLocalAudio,
-    pauseLocalVideo, resumeLocalVideo, unPublishScreenTrack
+    leave, join, joinState, remoteUsers, publishScreenTrack, unPublishLocalVideoTrack, rePublishLocalVideoTrack, muteLocalAudio, unmuteLocalAudio,
+    pauseLocalVideo, resumeLocalVideo, unPublishScreenTrack, localVideoTrack
   } = useAgora(client, publish);
 
-  useEffect(() => {
-    socket.on('UPDATE_PINNED_UID', (uid) => {
-      setPublisherUid(uid);
-    })
-  }, []);
-
-
   const getPinnedTracks = () => {
-    if(publisherUid) {
-      const pinnedUser = remoteUsers.filter(u => u.uid == publisherUid)[0];
-      if(pinnedUser) {
-        return {audio: pinnedUser.audioTrack, video: pinnedUser.videoTrack}
-      }
-    } 
-    return {audio: undefined, video: localVideoTrack};
+    if(publish){
+      return {audio: undefined, video: localVideoTrack};
+    }
+    const remoteTracks = remoteUsers[0];
+    console.log('*****************');
+    console.log(remoteTracks);
+
+    if(!remoteTracks) {
+      return null;
+    }
+    return {audio: remoteTracks.audioTrack, video: remoteTracks.videoTrack};
+    // if(publisherUid) {
+    //   const pinnedUser = remoteUsers.filter(u => u.uid == publisherUid)[0];
+    //   if(pinnedUser) {
+    //     return {audio: pinnedUser.audioTrack, video: pinnedUser.videoTrack}
+    //   }
+    // } 
+    // return {audio: undefined, video: localVideoTrack};
   }
 
   const dropCall = () => {
@@ -105,8 +108,6 @@ function AgoraCall() {
     );
   }
 
-  const pinnedTracks = getPinnedTracks();
-
   const VideoPlaceholder = ({title} : {title: string}) => {
     return (
       <div className='user-placeholder-controller'>
@@ -116,14 +117,30 @@ function AgoraCall() {
     );
   }
 
+  const WaitingScreen = () => {
+    return (
+      <div className='host-placeholder-wrapper'>
+       <span>Waiting for host</span>
+      </div>
+    );
+  }
+
   const renderMainView = () => {
+  
     if (publish && !cameraActive) {
-      return <VideoPlaceholder title={uid || ''} />
+      return <VideoPlaceholder title={'You are host...'} />
     }
+
+    const pinnedTracks = getPinnedTracks();
+
+    if (!pinnedTracks) {
+      return <WaitingScreen />
+    }
+
     if (pinnedTracks.video) {
       return <MediaPlayer audioTrack={pinnedTracks.audio} videoTrack={pinnedTracks.video} style={{ height: "100vh"}} />;
     }
-    return <VideoPlaceholder title={publisherUid || ''} />
+    return <VideoPlaceholder title={'Host...'} />
    
   }
 

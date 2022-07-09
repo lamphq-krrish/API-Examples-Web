@@ -14,7 +14,6 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
       join: Function,
       remoteUsers: IAgoraRTCRemoteUser[],
       publishScreenTrack: Function,
-      stopScreenSharing: Function,
       resumeLocalTracks: Function,
       pauseLocalTracks: Function,
       rePublishLocalVideoTrack: Function,
@@ -44,12 +43,20 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
 
   async function join(appid: string, channel: string, token?: string, uid?: string | number | null) {
     if (!client) return;
-    const [microphoneTrack, cameraTrack] = await createLocalTracks();
+    
     await client.join(appid, channel, token || null, uid);
-    await client.publish([microphoneTrack, cameraTrack]);
-
+    console.log('%%%%%%');
+    console.log(publish);
+    if (publish){
+      console.log('$$$$$$$$$$$');
+      console.log('Publishing');
+      const [microphoneTrack, cameraTrack] = await createLocalTracks();
+      await client.publish([microphoneTrack, cameraTrack]);
+      (window as any).videoTrack = cameraTrack;
+    }
+   
     (window as any).client = client;
-    (window as any).videoTrack = cameraTrack;
+
 
     setJoinState(true);
   }
@@ -127,10 +134,6 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
     return;
   }
 
-  async function stopScreenSharing(){
-    screenTrack.stop();
-    screenTrack.close();
-  }
 
   useEffect(() => {
     if (!client) return;
@@ -145,6 +148,8 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
       setRemoteUsers(remoteUsers => Array.from(client.remoteUsers));
     }
     const handleUserJoined = (user: IAgoraRTCRemoteUser) => {
+      console.log('$$$$$$$$$$$$$');
+      console.log('User joined');
       setRemoteUsers(remoteUsers => Array.from(client.remoteUsers));
     }
     const handleUserLeft = (user: IAgoraRTCRemoteUser) => {
@@ -171,7 +176,6 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
     join,
     remoteUsers,
     publishScreenTrack,
-    stopScreenSharing,
     resumeLocalTracks,
     pauseLocalTracks,
     unPublishLocalVideoTrack,

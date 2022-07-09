@@ -26,6 +26,11 @@
   background-color: black;
 }
 
+.user-placeholder-wrapper div{
+  margin-top: 16px;
+  color: floralwhite;
+}
+
 .host-placeholder-wrapper {
   display: flex;
   flex-direction: column;

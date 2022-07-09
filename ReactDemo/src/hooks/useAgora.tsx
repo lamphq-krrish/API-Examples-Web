@@ -45,8 +45,7 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
     if (!client) return;
     
     await client.join(appid, channel, token || null, uid);
-    console.log('%%%%%%');
-    console.log(publish);
+
     if (publish){
       console.log('$$$$$$$$$$$');
       console.log('Publishing');

@@ -3,7 +3,6 @@ import AgoraRTC from 'agora-rtc-sdk-ng';
 import useAgora from './hooks/useAgora';
 import MediaPlayer from './components/MediaPlayer';
 import './AgoraCall.css';
-import socket from './socket';
 import { getAppId, getRole, getRtcChannel, getRtcToken, getUid } from './utils';
 import { MdScreenShare, MdStopScreenShare, MdMic, MdMicOff, MdVideocam, MdVideocamOff, MdCallEnd  } from "react-icons/md";
 import {BiClipboard} from "react-icons/bi";
@@ -12,6 +11,11 @@ import {FaUserCircle} from "react-icons/fa";
 
 const client = AgoraRTC.createClient({ codec: 'h264', mode: 'rtc' });
 
+const ROLE = {
+  instructor: 'instructor',
+  learner: 'learner',
+}
+
 function AgoraCall() {
   const uid = getUid();
   const appId = getAppId();
@@ -19,13 +23,12 @@ function AgoraCall() {
   const channel = getRtcChannel();
   const role = getRole();
 
-  const [publisherUid, setPublisherUid] = useState(null);
   const [cameraActive, setCameraActive] = useState(true);
   const [micActive, setMicActive] = useState(true); 
   const [screenSharing, setScreenSharing] = useState(false);
   const [joining, setJoining] = useState(false);
 
-  const publish = role === "instructor";
+  const publish = role === ROLE.instructor;
   
   const {
     leave, join, joinState, remoteUsers, publishScreenTrack, unPublishLocalVideoTrack, rePublishLocalVideoTrack, muteLocalAudio, unmuteLocalAudio,
@@ -44,13 +47,6 @@ function AgoraCall() {
       return null;
     }
     return {audio: remoteTracks.audioTrack, video: remoteTracks.videoTrack};
-    // if(publisherUid) {
-    //   const pinnedUser = remoteUsers.filter(u => u.uid == publisherUid)[0];
-    //   if(pinnedUser) {
-    //     return {audio: pinnedUser.audioTrack, video: pinnedUser.videoTrack}
-    //   }
-    // } 
-    // return {audio: undefined, video: localVideoTrack};
   }
 
   const dropCall = () => {
@@ -110,7 +106,7 @@ function AgoraCall() {
 
   const VideoPlaceholder = ({title} : {title: string}) => {
     return (
-      <div className='user-placeholder-controller'>
+      <div className='user-placeholder-wrapper'>
         <FaUserCircle className='user-placeholder' />
         <div>{title}</div>
       </div>

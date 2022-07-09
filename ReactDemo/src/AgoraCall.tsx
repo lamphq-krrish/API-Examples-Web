@@ -74,14 +74,15 @@ function AgoraCall() {
   const startScreenShare = async () => {
     unPublishLocalVideoTrack();
     try{
-      await publishScreenTrack();
+      await publishScreenTrack(() => {
+        stopScreenShare();
+      });
       setScreenSharing(true);
     }catch(err) {
       rePublishLocalVideoTrack();
       console.error(err);
       window.alert('Unable to share screen, check your settings');
     }
-   
   }
 
   const stopScreenShare = () => {

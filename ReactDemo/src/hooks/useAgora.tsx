@@ -109,20 +109,21 @@ export default function useAgora(client: IAgoraRTCClient | undefined, publish: b
     return;
   }
 
-  async function publishScreenTrack() {
+  async function publishScreenTrack(onEndCb: Function) {
     if (!client || !publish) return;
 
-      if (screenTrack) {
-        client.publish(screenTrack);
-      } else {
-        const screenShareTrack = await AgoraRTC.createScreenVideoTrack({encoderConfig: "1080p_1", optimizationMode: "detail"}, "disable" );
-        setScreenTrack(screenShareTrack);
-        client.publish(screenShareTrack);
-      }      
+    const screenShareTrack = await AgoraRTC.createScreenVideoTrack({encoderConfig: "1080p_1", optimizationMode: "detail"}, "disable" );
+    // trigger callback when the stream is ended from browser
+    screenShareTrack.getMediaStreamTrack().onended = () => {
+      onEndCb();
+    }
+    setScreenTrack(screenShareTrack);
+    client.publish(screenShareTrack);     
   }
 
   async function unPublishScreenTrack() {
     client?.unpublish(screenTrack);
+    setScreenTrack(null);
     return;
   }
 

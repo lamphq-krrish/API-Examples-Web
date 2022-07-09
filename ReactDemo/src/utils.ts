@@ -8,6 +8,8 @@ const PARAMS = {
   type: "type",
   role: "role",
   appId: "appId",
+  rtcChannel: "rtcChannel",
+  instructorName: "instructorName"
 };
 
 export function getQueryVariable(arg: string) {
@@ -34,6 +36,10 @@ export function getWbPass() {
   return getQueryVariable(PARAMS.wbPass);
 }
 
+export function getInstructorName() {
+  return getQueryVariable(PARAMS.instructorName);
+}
+
 export function getUid() {
   return getQueryVariable(PARAMS.uid);
 }
@@ -56,4 +62,8 @@ export function getRole() {
 
 export function getAppId() {
   return getQueryVariable(PARAMS.appId);
+}
+
+export function getRtcChannel() {
+  return getQueryVariable(PARAMS.rtcChannel);
 }

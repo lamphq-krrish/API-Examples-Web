@@ -10,6 +10,8 @@ export interface VideoPlayerProps {
 const MediaPlayer = (props: VideoPlayerProps) => {
   const container = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    console.log('***********');
+    console.log(props.videoTrack);
     if (!container.current) return;
     props.videoTrack?.play(container.current);
     return () => {

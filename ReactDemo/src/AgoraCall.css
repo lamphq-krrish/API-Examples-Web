@@ -1,7 +1,8 @@
-.loading-container {
+.join-screen-container {
   display: flex;
-  align-items: center;
+  height: 100vh;
   justify-content: center;
+  align-items: center;
 }
 
 .control-buttons-wrapper {
@@ -16,6 +17,21 @@
   width: 100%;
 }
 
+.user-placeholder-controller {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: black;
+}
+
+.user-placeholder {
+  font-size: 64px;
+  color: floralwhite;
+  color: white;
+}
+
 .main-container {
   position: relative;
 }
@@ -23,6 +39,7 @@
 .call {
   text-align: center;
 }
+
 
 .control-button {
   margin-top: 4px;
@@ -37,6 +54,10 @@
 
 .bg-red {
   background-color: red;
+}
+
+.bg-cyan {
+  background-color: cyan;
 }
 
 .bg-grey {
